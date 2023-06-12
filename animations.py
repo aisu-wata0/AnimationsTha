@@ -9,7 +9,7 @@ from python_utils_aisu.utils import Cooldown
 
 # Static emotions
 
-class Animation_tha_happy(Animation):
+class Animation_sentiment_happy_tha(Animation):
     def __post_init__(self):
         if not self.type:
             self.type = 'sentiment' 
@@ -23,7 +23,7 @@ class Animation_tha_happy(Animation):
         self.state['mouth_raised_corner_right'] = 0.8
 
 
-class Animation_tha_surprised(Animation):
+class Animation_sentiment_surprised_tha(Animation):
     def __post_init__(self):
         if not self.type:
             self.type = 'sentiment' 
@@ -35,7 +35,7 @@ class Animation_tha_surprised(Animation):
 
 # Idle animations
 
-class Animation_tha_idle_blinks_random(Animation):
+class Animation_idle_blinks_random_tha(Animation):
     def __post_init__(self):
         if not self.type:
             self.type = 'idle_blink'
@@ -56,7 +56,7 @@ class Animation_tha_idle_blinks_random(Animation):
         self.state['eye_happy_wink_right'] = math.sin(elapsed_p * math.pi) * 1.0
 
 
-class Animation_tha_idle_glance_random(Animation):
+class Animation_idle_glance_random_tha(Animation):
     def __post_init__(self):
         if not self.type:
             self.type = 'idle_glance'
@@ -79,7 +79,7 @@ class Animation_tha_idle_glance_random(Animation):
         self.state['head_y'] = math.sin(elapsed_p * math.pi) * 0.6
 
 
-class Animation_tha_idle_body_sway(Animation):
+class Animation_idle_body_sway_tha(Animation):
     def __post_init__(self):
         if not self.type:
             self.type = 'idle_body'
@@ -95,7 +95,7 @@ class Animation_tha_idle_body_sway(Animation):
         self.state['body_y'] = math.sin(tc_pi_duration) * 1.0
 
 
-class Animation_tha_idle_breathing_sin(Animation):
+class Animation_idle_breathing_sin_tha(Animation):
     def __post_init__(self):
         if not self.type:
             self.type = 'idle_breathing'
@@ -111,10 +111,10 @@ class Animation_tha_idle_breathing_sin(Animation):
 
 
 Animation.register_classes({
-    'Animation_tha_happy': Animation_tha_happy,
-    'Animation_tha_surprised': Animation_tha_surprised,
-    'Animation_tha_idle_blinks_random': Animation_tha_idle_blinks_random,
-    'Animation_tha_idle_glance_random': Animation_tha_idle_glance_random,
-    'Animation_tha_idle_body_sway': Animation_tha_idle_body_sway,
-    'Animation_tha_idle_breathing_sin': Animation_tha_idle_breathing_sin,
+    'Animation_sentiment_happy_tha': Animation_sentiment_happy_tha,
+    'Animation_sentiment_surprised_tha': Animation_sentiment_surprised_tha,
+    'Animation_idle_blinks_random_tha': Animation_idle_blinks_random_tha,
+    'Animation_idle_glance_random_tha': Animation_idle_glance_random_tha,
+    'Animation_idle_body_sway_tha': Animation_idle_body_sway_tha,
+    'Animation_idle_breathing_sin_tha': Animation_idle_breathing_sin_tha,
 })
