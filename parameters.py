@@ -20,13 +20,13 @@ class AParametersTha(AParameters):
     pose_parameter_count = pose_parameter_count
 
     def __init__(self, array: np.ndarray | None = None):
-        if not array:
+        if array is None:
             array = np.array([0.0] * AParametersTha.pose_parameter_count)
         self.array = array
     
     def get_parameter_index(self, pose_parameter_name):
         return AParametersTha.pose_parameters.get_parameter_index(pose_parameter_name)
-        
+    
     def __setitem__(self, key, value):
         if isinstance(key, int):
             self.array[key] = value
@@ -43,13 +43,13 @@ class AParametersTha(AParameters):
 
     def __mul__(self, scalar: float) -> AParameters:
         return AParametersTha(self.array * scalar)
-
+    
     def __rmul__(self, scalar: float) -> AParameters:
         return AParametersTha(self.array * scalar)
 
 
 
-def model_input_split(model_input_arr: AParametersTha, time_counter):
+def model_input_split(model_input_arr, time_counter):
     return {
         "eyebrow_vector_c": model_input_arr.array[:12],
         "mouth_eye_vector_c": model_input_arr.array[12:12+27],
