@@ -8,7 +8,10 @@ from AnimationStates.animation import Animation, AParameters, AnimationStates, B
 from .parameters import AParametersTha
 
 from python_utils_aisu.utils import Cooldown
+from python_utils_aisu import utils
 
+logger = utils.loggingGetLogger(__name__)
+logger.setLevel('INFO')
 
 class AnimationStatesTha(AnimationStates):
     def get_parameters_neutral(self) -> AParametersTha:
@@ -34,8 +37,8 @@ class Animation_sentiment_happy_tha(Animation_tha):
         self.state['eyebrow_happy_left'] = 1.0
         self.state['eyebrow_happy_right'] = 1.0
 
-        self.state['mouth_raised_corner_left'] = 0.8
-        self.state['mouth_raised_corner_right'] = 0.8
+        self.state['mouth_raised_corner_left'] = 1.0
+        self.state['mouth_raised_corner_right'] = 1.0
 
 
 class Animation_sentiment_surprised_tha(Animation_tha):
@@ -61,7 +64,7 @@ class Animation_idle_blinks_random_tha(Animation_tha):
             self.duration = 0.25
 
         self.interval = self.fill_default_dict(self.interval, {
-            'time': 3.5,
+            'seconds': 3.5,
             'variance': 3.3,
         })
         # self.curve_open = BezierCurveCubic.css(0,.57,.5,1)
@@ -86,17 +89,20 @@ class Animation_idle_blinks_random_tha(Animation_tha):
         self.state['eye_happy_wink_left'] = w
         self.state['eye_happy_wink_right'] = w
 
-class Animation_idle_glance_random_tha(Animation_tha):
+
+class Animation_idle_eye_unfocused_random_tha(Animation_tha):
     def __post_init__(self):
         super().__post_init__()
         if not self.typ:
             self.typ = 'idle_glance'
 
-        if not self.duration:
-            self.duration = 0.2
+        self.duration = self.fill_default_dict(self.duration, {
+            'seconds': 0.4,
+            'variance': 0.2,
+        })
 
         self.interval = self.fill_default_dict(self.interval, {
-            'time': 14,
+            'seconds': 14,
             'variance': 6,
         })
 
@@ -106,8 +112,9 @@ class Animation_idle_glance_random_tha(Animation_tha):
                 direction = -1
             self.random = {
                 'iris_rotation_x': direction * random.uniform(0.0, 0.1),
-                'iris_rotation_y': direction * random.uniform(0.5, 1.0),
-                'head_y': direction * random.uniform(0.0, 0.3),
+                'iris_rotation_y': direction * random.uniform(0.5, 0.8),
+                'head_y': direction * random.uniform(0.0, 0.05),
+                'direction': direction,
             }
 
     def animate(self, elapsed, time_counter, **kwargs):
@@ -115,9 +122,48 @@ class Animation_idle_glance_random_tha(Animation_tha):
         elapsed_p = self.elapsed_percent(time_counter)
         self.state['iris_rotation_x'] = self.random['iris_rotation_x']
         self.state['iris_rotation_y'] = self.random['iris_rotation_y']
-        self.state['head_y'] = math.sin(elapsed_p * math.pi) * self.random['head_y']
+        self.state['head_y'] = math.sin(elapsed_p * math.pi / 2) * self.random['head_y']
 
         if elapsed_p == 1.0:
+            self.init()
+
+
+class Animation_idle_eye_glance_random_tha(Animation_tha):
+    def __post_init__(self):
+        super().__post_init__()
+        if not self.typ:
+            self.typ = 'idle_glance'
+
+        self.duration = self.fill_default_dict(self.duration, {
+            'seconds': 0.4,
+            'variance': 0.2,
+        })
+
+        self.interval = self.fill_default_dict(self.interval, {
+            'seconds': 14,
+            'variance': 6,
+        })
+
+    def init(self):
+            direction = random.randint(0, 1)
+            if direction == 0:
+                direction = -1
+            self.random = {
+                'iris_rotation_x': direction * random.uniform(0.0, 0.1),
+                'iris_rotation_y': direction * random.uniform(0.5, 0.8),
+                'head_y': direction * random.uniform(0.0, 0.05),
+                'direction': direction,
+            }
+
+    def animate(self, elapsed, time_counter, **kwargs):
+        self.state = AParametersTha()
+        elapsed_p = self.elapsed_percent(time_counter)
+        self.state['iris_rotation_x'] = self.random['iris_rotation_x']
+        self.state['iris_rotation_y'] = self.random['iris_rotation_y']
+        self.state['head_y'] = elapsed_p * self.random['head_y']
+
+        if elapsed_p == 1.0:
+            self.state = AParametersTha()
             self.init()
 
 class Animation_idle_body_still_tha(Animation_tha):
@@ -226,7 +272,8 @@ Animation.register_classes({
     'Animation_sentiment_happy_tha': Animation_sentiment_happy_tha,
     'Animation_sentiment_surprised_tha': Animation_sentiment_surprised_tha,
     'Animation_idle_blinks_random_tha': Animation_idle_blinks_random_tha,
-    'Animation_idle_glance_random_tha': Animation_idle_glance_random_tha,
+    'Animation_idle_eye_unfocused_random_tha': Animation_idle_eye_unfocused_random_tha,
+    'Animation_idle_eye_glance_random_tha': Animation_idle_eye_glance_random_tha,
     'Animation_idle_body_still_tha': Animation_idle_body_still_tha,
     'Animation_idle_body_sway_tha': Animation_idle_body_sway_tha,
     'Animation_idle_body_head_sway_tha': Animation_idle_body_head_sway_tha,
