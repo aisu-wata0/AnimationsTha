@@ -2,8 +2,11 @@
 from abc import abstractmethod
 import math
 import random
+from typing import Dict
 
-from AnimationStates.animation import Animation, AParameters, AnimationStates, BezierCurveCubic
+import numpy as np
+
+from AnimationStates.animation import Animation, Animation_keyframes, AParameters, AnimationStates, BezierCurveCubic
 
 from .parameters import AParametersTha
 
@@ -13,6 +16,15 @@ from python_utils_aisu import utils
 logger = utils.loggingGetLogger(__name__)
 logger.setLevel('INFO')
 
+
+mouth_shape_to_parameter_name = {
+    'a': 'mouth_aaa',
+    'e': 'mouth_eee',
+    'i': 'mouth_iii',
+    'o': 'mouth_ooo',
+    'u': 'mouth_uuu',
+}
+
 class AnimationStatesTha(AnimationStates):
     def get_parameters_neutral(self) -> AParametersTha:
         """
@@ -20,12 +32,29 @@ class AnimationStatesTha(AnimationStates):
         """
         return AParametersTha()
 
-# Static emotions
+    def get_mouth_keyframes(self, mouth_keyframes: Dict[float, str]) -> Dict[float, AParametersTha]:
+        mouth_keyframes_p = {}
+        for second, mouth_shape in mouth_keyframes.items():
+            p = AParametersTha()
+            if mouth_shape:
+                p[mouth_shape_to_parameter_name[mouth_shape]] = 1.0
+            mouth_keyframes_p[second] = p
+        return mouth_keyframes_p
+
 
 class Animation_tha(Animation):
     def __post_init__(self):
         self.state = AParametersTha()
 
+    @staticmethod
+    def neutral():
+        return AParametersTha()
+
+    @staticmethod
+    def from_array(array: np.ndarray) -> AParametersTha:
+        return AParametersTha(array)
+
+# Static emotions
 
 class Animation_sentiment_happy_tha(Animation_tha):
     def __post_init__(self):
